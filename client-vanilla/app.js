@@ -154,7 +154,6 @@ function addToCart(productId, quantity) {
   }
 
   renderCartPanel();
-  attachCartRowListeners();
   updateBadge();
   updateTotal();
   updateShippingNote();
@@ -172,12 +171,12 @@ function renderCartPanel() {
         '</div>' +
         '<div class="cart-item-controls">' +
           '<div class="stepper">' +
-            '<button class="qty-minus" type="button">−</button>' +
+            '<button class="qty-minus" type="button" data-action="decrement">−</button>' +
             '<span class="qty-value">' + item.quantity + '</span>' +
-            '<button class="qty-plus" type="button">+</button>' +
+            '<button class="qty-plus" type="button" data-action="increment">+</button>' +
           '</div>' +
           '<span class="cart-item-total">' + formatPrice(product.price * item.quantity) + '</span>' +
-          '<button class="remove-btn" type="button">Remove</button>' +
+          '<button class="remove-btn" type="button" data-action="remove">Remove</button>' +
         '</div>' +
       '</div>'
     );
@@ -187,25 +186,24 @@ function renderCartPanel() {
   cartItemsContainer.classList.toggle('hidden', cart.length === 0);
 }
 
-function attachCartRowListeners() {
-  cartItemsContainer.querySelectorAll('.remove-btn').forEach(function (btn, index) {
-    btn.addEventListener('click', function () {
-      removeFromCart(cart[index].productId);
-    });
-  });
+cartItemsContainer.addEventListener('click', function (event) {
+  const button = event.target.closest('[data-action]');
+  if (!button) {
+    return;
+  }
 
-  cartItemsContainer.querySelectorAll('.qty-plus').forEach(function (btn, index) {
-    btn.addEventListener('click', function () {
-      incrementQuantity(cart[index].productId);
-    });
-  });
+  const row = button.closest('[data-product-id]');
+  const productId = Number(row.dataset.productId);
+  const action = button.dataset.action;
 
-  cartItemsContainer.querySelectorAll('.qty-minus').forEach(function (btn, index) {
-    btn.addEventListener('click', function () {
-      decrementQuantity(cart[index].productId);
-    });
-  });
-}
+  if (action === 'increment') {
+    incrementQuantity(productId);
+  } else if (action === 'decrement') {
+    decrementQuantity(productId);
+  } else if (action === 'remove') {
+    removeFromCart(productId);
+  }
+});
 
 function incrementQuantity(productId) {
   const item = cart.find(function (cartItem) {
@@ -247,7 +245,6 @@ function removeFromCart(productId) {
   });
 
   renderCartPanel();
-  attachCartRowListeners();
   updateBadge();
   updateTotal();
   updateShippingNote();
@@ -296,7 +293,6 @@ async function loadProducts() {
     renderProductGrid(allProducts);
     populateCategoryFilter(allProducts);
     renderCartPanel();
-    attachCartRowListeners();
     updateBadge();
     updateTotal();
     updateShippingNote();
