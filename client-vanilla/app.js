@@ -178,9 +178,7 @@ function addToCart(productId, quantity) {
 
   renderCartPanel();
   updateBadge();
-  updateTotal();
-  updateShippingNote();
-  updateCheckoutButton();
+  recalculateSummary();
 }
 
 function renderCartPanel() {
@@ -239,8 +237,7 @@ function incrementQuantity(productId) {
 
   renderCartPanel();
   updateBadge();
-  updateTotal();
-  updateCheckoutButton();
+  recalculateSummary();
 }
 
 function decrementQuantity(productId) {
@@ -260,8 +257,7 @@ function decrementQuantity(productId) {
 
   renderCartPanel();
   updateBadge();
-  updateTotal();
-  updateCheckoutButton();
+  recalculateSummary();
 }
 
 function removeFromCart(productId) {
@@ -271,10 +267,19 @@ function removeFromCart(productId) {
 
   renderCartPanel();
   updateBadge();
-  updateTotal();
-  updateShippingNote();
-  updateCheckoutButton();
+  recalculateSummary();
 }
+
+function checkout() {
+  cart = [];
+
+  renderCartPanel();
+  updateBadge();
+  recalculateSummary();
+  setStatus('Order placed (pretend).');
+}
+
+checkoutBtn.addEventListener('click', checkout);
 
 function updateBadge() {
   const itemCount = cart.reduce(function (sum, item) {
@@ -310,6 +315,12 @@ function updateCheckoutButton() {
   checkoutBtn.disabled = cart.length === 0;
 }
 
+function recalculateSummary() {
+  updateTotal();
+  updateShippingNote();
+  updateCheckoutButton();
+}
+
 async function loadProducts() {
   setStatus('Loading products…');
   try {
@@ -319,9 +330,7 @@ async function loadProducts() {
     populateCategoryFilter(allProducts);
     renderCartPanel();
     updateBadge();
-    updateTotal();
-    updateShippingNote();
-    updateCheckoutButton();
+    recalculateSummary();
     clearStatus();
   } catch (err) {
     setStatus('Could not load products. Is the server running?', true);
