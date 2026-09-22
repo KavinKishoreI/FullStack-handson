@@ -142,6 +142,29 @@ function populateCategoryFilter(products) {
   });
 }
 
+let searchText = '';
+let selectedCategory = '';
+
+const searchInput = document.getElementById('search-input');
+
+function getFilteredProducts() {
+  return allProducts.filter(function (product) {
+    const matchesSearch = product.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
+    const matchesCategory = selectedCategory === '' || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+}
+
+searchInput.addEventListener('input', function () {
+  searchText = searchInput.value;
+  renderProductGrid(getFilteredProducts());
+});
+
+categorySelect.addEventListener('change', function () {
+  selectedCategory = categorySelect.value;
+  renderProductGrid(getFilteredProducts());
+});
+
 function addToCart(productId, quantity) {
   const existing = cart.find(function (item) {
     return item.productId === productId;
