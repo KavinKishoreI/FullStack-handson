@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { formatPrice } from '../format.js';
 
-function ProductCard({ product }) {
+function ProductCard({ product, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
   const isOutOfStock = product.stock === 0;
 
@@ -39,7 +39,12 @@ function ProductCard({ product }) {
         <span className="qty-value">{quantity}</span>
         <button type="button" onClick={increment}>+</button>
       </div>
-      <button type="button" className="add-to-cart-btn" disabled={isOutOfStock}>
+      <button
+        type="button"
+        className="add-to-cart-btn"
+        disabled={isOutOfStock}
+        onClick={() => onAddToCart(product, quantity)}
+      >
         Add to cart
       </button>
     </div>

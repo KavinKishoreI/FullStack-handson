@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import Header from './components/Header.jsx';
 import StatusLine from './components/StatusLine.jsx';
 import Filters from './components/Filters.jsx';
 import ProductGrid from './components/ProductGrid.jsx';
+import CartPanel from './components/CartPanel.jsx';
 import Summary from './components/Summary.jsx';
 
 const PRODUCTS = [
@@ -16,9 +18,46 @@ const PRODUCTS = [
 ];
 
 function App() {
+  const [cart, setCart] = useState([]);
+
+  function findProduct(productId) {
+    return PRODUCTS.find((product) => product.id === productId);
+  }
+
+  function handleAddToCart(product, quantity) {
+    const existing = cart.find((item) => item.productId === product.id);
+
+    if (existing) {
+      setCart(
+        cart.map((item) =>
+          item.productId === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        )
+      );
+    } else {
+      setCart([...cart, { productId: product.id, quantity }]);
+    }
+  }
+
+  const cartLines = cart.map((item) => {
+    const product = findProduct(item.productId);
+    return {
+      productId: item.productId,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      quantity: item.quantity,
+      lineTotal: product.price * item.quantity,
+    };
+  });
+
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const total = cartLines.reduce((sum, line) => sum + line.lineTotal, 0);
+
   return (
     <>
-      <Header itemCount={0} />
+      <Header itemCount={itemCount} />
 
       <main className="layout">
         <section className="products-column">
@@ -32,20 +71,19 @@ function App() {
 
           <StatusLine message="" />
 
-          <ProductGrid products={PRODUCTS} />
+          <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
         </section>
 
         <aside className="cart-column">
           <h2>Your Cart</h2>
 
-          <div id="cart-items" className="cart-items"></div>
-          <p id="cart-empty" className="cart-empty">Your cart is empty</p>
+          <CartPanel items={cartLines} />
 
           <Summary
-            total={0}
+            total={total}
             shippingNote=""
             isFreeShipping={false}
-            disabled={true}
+            disabled={cart.length === 0}
             onCheckout={() => {}}
           />
         </aside>
