@@ -146,6 +146,10 @@ function App() {
           <StatusLine message={status} isError={statusIsError} />
 
           <ProductGrid products={visibleProducts} onAddToCart={handleAddToCart} />
+
+          {products.length > 0 && visibleProducts.length === 0 && (
+            <p>No products match your search.</p>
+          )}
         </section>
 
         <aside className="cart-column">
