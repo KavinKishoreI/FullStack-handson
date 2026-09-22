@@ -154,6 +154,7 @@ function addToCart(productId, quantity) {
   }
 
   renderCartPanel();
+  attachCartRowListeners();
   updateBadge();
   updateTotal();
   updateShippingNote();
@@ -172,6 +173,7 @@ function renderCartPanel() {
         '<div class="cart-item-controls">' +
           '<span class="qty-value">Qty: ' + item.quantity + '</span>' +
           '<span class="cart-item-total">' + formatPrice(product.price * item.quantity) + '</span>' +
+          '<button class="remove-btn" type="button">Remove</button>' +
         '</div>' +
       '</div>'
     );
@@ -179,6 +181,26 @@ function renderCartPanel() {
 
   cartEmpty.classList.toggle('hidden', cart.length > 0);
   cartItemsContainer.classList.toggle('hidden', cart.length === 0);
+}
+
+function attachCartRowListeners() {
+  cartItemsContainer.querySelectorAll('.remove-btn').forEach(function (btn, index) {
+    btn.addEventListener('click', function () {
+      removeFromCart(cart[index].productId);
+    });
+  });
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(function (item) {
+    return item.productId !== productId;
+  });
+
+  renderCartPanel();
+  attachCartRowListeners();
+  updateTotal();
+  updateShippingNote();
+  updateCheckoutButton();
 }
 
 function updateBadge() {
@@ -223,6 +245,7 @@ async function loadProducts() {
     renderProductGrid(allProducts);
     populateCategoryFilter(allProducts);
     renderCartPanel();
+    attachCartRowListeners();
     updateBadge();
     updateTotal();
     updateShippingNote();
