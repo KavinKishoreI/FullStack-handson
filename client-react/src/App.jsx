@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header.jsx';
 import StatusLine from './components/StatusLine.jsx';
 import Filters from './components/Filters.jsx';
@@ -6,28 +6,37 @@ import ProductGrid from './components/ProductGrid.jsx';
 import CartPanel from './components/CartPanel.jsx';
 import Summary from './components/Summary.jsx';
 import { formatPrice } from './format.js';
+import { fetchProducts } from './api.js';
 
 const FREE_SHIPPING_THRESHOLD = 200000;
 
-const PRODUCTS = [
-  { id: 1, name: 'Wireless Mouse', description: 'Compact 2.4GHz mouse with silent clicks.', price: 79900, category: 'electronics', imageUrl: 'https://placehold.co/400x300?text=Mouse', stock: 25 },
-  { id: 2, name: 'Mechanical Keyboard', description: 'Tenkeyless keyboard with brown switches.', price: 349900, category: 'electronics', imageUrl: 'https://placehold.co/400x300?text=Keyboard', stock: 10 },
-  { id: 3, name: 'Desk Lamp', description: 'LED lamp with three brightness levels.', price: 129900, category: 'home', imageUrl: 'https://placehold.co/400x300?text=Lamp', stock: 15 },
-  { id: 4, name: 'Ceramic Mug', description: '350ml mug, dishwasher safe.', price: 29900, category: 'home', imageUrl: 'https://placehold.co/400x300?text=Mug', stock: 40 },
-  { id: 5, name: 'Clean Code', description: 'A handbook of agile software craftsmanship.', price: 59900, category: 'books', imageUrl: 'https://placehold.co/400x300?text=Book', stock: 12 },
-  { id: 6, name: 'Notebook Pack', description: 'Set of three ruled A5 notebooks.', price: 24900, category: 'stationery', imageUrl: 'https://placehold.co/400x300?text=Notebooks', stock: 30 },
-  { id: 7, name: 'Limited Edition Hoodie', description: 'Club hoodie, one left.', price: 149900, category: 'apparel', imageUrl: 'https://placehold.co/400x300?text=Hoodie', stock: 1 },
-  { id: 8, name: 'USB-C Hub', description: '6-in-1 hub with HDMI and card reader.', price: 199900, category: 'electronics', imageUrl: 'https://placehold.co/400x300?text=Hub', stock: 0 },
-];
-
 function App() {
+  const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [status, setStatus] = useState('');
+  const [statusIsError, setStatusIsError] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [category, setCategory] = useState('');
 
+  useEffect(() => {
+    async function loadProducts() {
+      setStatus('Loading products…');
+      setStatusIsError(false);
+      try {
+        const data = await fetchProducts();
+        setProducts(data);
+        setStatus('');
+      } catch (err) {
+        setStatus('Could not load products. Is the server running?');
+        setStatusIsError(true);
+      }
+    }
+
+    loadProducts();
+  }, []);
+
   function findProduct(productId) {
-    return PRODUCTS.find((product) => product.id === productId);
+    return products.find((product) => product.id === productId);
   }
 
   function handleAddToCart(product, quantity) {
@@ -38,6 +47,7 @@ function App() {
 
     if (newQuantity < desiredQuantity) {
       setStatus(`Only ${product.stock} left in stock for ${product.name}.`);
+      setStatusIsError(false);
     }
 
     if (existing) {
@@ -57,6 +67,7 @@ function App() {
 
     if (item.quantity >= product.stock) {
       setStatus(`Only ${product.stock} left in stock for ${product.name}.`);
+      setStatusIsError(false);
       return;
     }
 
@@ -88,6 +99,7 @@ function App() {
   function handleCheckout() {
     setCart([]);
     setStatus('Order placed (pretend).');
+    setStatusIsError(false);
   }
 
   const cartLines = cart.map((item) => {
@@ -109,9 +121,9 @@ function App() {
     ? 'You have free shipping'
     : `Add ${formatPrice(FREE_SHIPPING_THRESHOLD - total)} more for free shipping`;
 
-  const categories = [...new Set(PRODUCTS.map((product) => product.category))];
+  const categories = [...new Set(products.map((product) => product.category))];
 
-  const visibleProducts = PRODUCTS.filter((product) => {
+  const visibleProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchText.toLowerCase());
     const matchesCategory = category === '' || product.category === category;
     return matchesSearch && matchesCategory;
@@ -131,7 +143,7 @@ function App() {
             onCategoryChange={setCategory}
           />
 
-          <StatusLine message={status} />
+          <StatusLine message={status} isError={statusIsError} />
 
           <ProductGrid products={visibleProducts} onAddToCart={handleAddToCart} />
         </section>
