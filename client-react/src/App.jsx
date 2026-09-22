@@ -40,6 +40,14 @@ function App() {
     }
   }
 
+  function handleIncrement(productId) {
+    const item = cart.find((cartItem) => cartItem.productId === productId);
+    if (item && item.quantity < 99) {
+      item.quantity++;
+    }
+    setCart(cart);
+  }
+
   const cartLines = cart.map((item) => {
     const product = findProduct(item.productId);
     return {
@@ -77,7 +85,7 @@ function App() {
         <aside className="cart-column">
           <h2>Your Cart</h2>
 
-          <CartPanel items={cartLines} />
+          <CartPanel items={cartLines} onIncrement={handleIncrement} />
 
           <Summary
             total={total}
