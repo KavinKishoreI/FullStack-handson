@@ -171,7 +171,11 @@ function renderCartPanel() {
           '<span class="cart-item-price">' + formatPrice(product.price) + ' each</span>' +
         '</div>' +
         '<div class="cart-item-controls">' +
-          '<span class="qty-value">Qty: ' + item.quantity + '</span>' +
+          '<div class="stepper">' +
+            '<button class="qty-minus" type="button">−</button>' +
+            '<span class="qty-value">' + item.quantity + '</span>' +
+            '<button class="qty-plus" type="button">+</button>' +
+          '</div>' +
           '<span class="cart-item-total">' + formatPrice(product.price * item.quantity) + '</span>' +
           '<button class="remove-btn" type="button">Remove</button>' +
         '</div>' +
@@ -189,6 +193,52 @@ function attachCartRowListeners() {
       removeFromCart(cart[index].productId);
     });
   });
+
+  cartItemsContainer.querySelectorAll('.qty-plus').forEach(function (btn, index) {
+    btn.addEventListener('click', function () {
+      incrementQuantity(cart[index].productId);
+    });
+  });
+
+  cartItemsContainer.querySelectorAll('.qty-minus').forEach(function (btn, index) {
+    btn.addEventListener('click', function () {
+      decrementQuantity(cart[index].productId);
+    });
+  });
+}
+
+function incrementQuantity(productId) {
+  const item = cart.find(function (cartItem) {
+    return cartItem.productId === productId;
+  });
+
+  if (item && item.quantity < 99) {
+    item.quantity += 1;
+  }
+
+  renderCartPanel();
+  updateBadge();
+  updateCheckoutButton();
+}
+
+function decrementQuantity(productId) {
+  const item = cart.find(function (cartItem) {
+    return cartItem.productId === productId;
+  });
+
+  if (item) {
+    if (item.quantity <= 1) {
+      cart = cart.filter(function (cartItem) {
+        return cartItem.productId !== productId;
+      });
+    } else {
+      item.quantity -= 1;
+    }
+  }
+
+  renderCartPanel();
+  updateBadge();
+  updateCheckoutButton();
 }
 
 function removeFromCart(productId) {
@@ -198,6 +248,7 @@ function removeFromCart(productId) {
 
   renderCartPanel();
   attachCartRowListeners();
+  updateBadge();
   updateTotal();
   updateShippingNote();
   updateCheckoutButton();
