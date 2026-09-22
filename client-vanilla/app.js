@@ -239,6 +239,7 @@ function incrementQuantity(productId) {
 
   renderCartPanel();
   updateBadge();
+  updateTotal();
   updateCheckoutButton();
 }
 
@@ -259,6 +260,7 @@ function decrementQuantity(productId) {
 
   renderCartPanel();
   updateBadge();
+  updateTotal();
   updateCheckoutButton();
 }
 
