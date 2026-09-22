@@ -1,3 +1,5 @@
 node_modules/
 .env
 data/shop.db
+data/shop.db-shm
+data/shop.db-wal
