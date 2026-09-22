@@ -5,6 +5,9 @@ import Filters from './components/Filters.jsx';
 import ProductGrid from './components/ProductGrid.jsx';
 import CartPanel from './components/CartPanel.jsx';
 import Summary from './components/Summary.jsx';
+import { formatPrice } from './format.js';
+
+const FREE_SHIPPING_THRESHOLD = 200000;
 
 const PRODUCTS = [
   { id: 1, name: 'Wireless Mouse', description: 'Compact 2.4GHz mouse with silent clicks.', price: 79900, category: 'electronics', imageUrl: 'https://placehold.co/400x300?text=Mouse', stock: 25 },
@@ -19,6 +22,7 @@ const PRODUCTS = [
 
 function App() {
   const [cart, setCart] = useState([]);
+  const [status, setStatus] = useState('');
 
   function findProduct(productId) {
     return PRODUCTS.find((product) => product.id === productId);
@@ -66,6 +70,11 @@ function App() {
     setCart(cart.filter((item) => item.productId !== productId));
   }
 
+  function handleCheckout() {
+    setCart([]);
+    setStatus('Order placed (pretend).');
+  }
+
   const cartLines = cart.map((item) => {
     const product = findProduct(item.productId);
     return {
@@ -80,6 +89,10 @@ function App() {
 
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const total = cartLines.reduce((sum, line) => sum + line.lineTotal, 0);
+  const isFreeShipping = total >= FREE_SHIPPING_THRESHOLD;
+  const shippingNote = isFreeShipping
+    ? 'You have free shipping'
+    : `Add ${formatPrice(FREE_SHIPPING_THRESHOLD - total)} more for free shipping`;
 
   return (
     <>
@@ -95,7 +108,7 @@ function App() {
             onCategoryChange={() => {}}
           />
 
-          <StatusLine message="" />
+          <StatusLine message={status} />
 
           <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
         </section>
@@ -112,10 +125,10 @@ function App() {
 
           <Summary
             total={total}
-            shippingNote=""
-            isFreeShipping={false}
+            shippingNote={shippingNote}
+            isFreeShipping={isFreeShipping}
             disabled={cart.length === 0}
-            onCheckout={() => {}}
+            onCheckout={handleCheckout}
           />
         </aside>
       </main>
