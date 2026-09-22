@@ -1,4 +1,8 @@
+import Header from './components/Header.jsx';
+import StatusLine from './components/StatusLine.jsx';
+import Filters from './components/Filters.jsx';
 import ProductGrid from './components/ProductGrid.jsx';
+import Summary from './components/Summary.jsx';
 
 const PRODUCTS = [
   { id: 1, name: 'Wireless Mouse', description: 'Compact 2.4GHz mouse with silent clicks.', price: 79900, category: 'electronics', imageUrl: 'https://placehold.co/400x300?text=Mouse', stock: 25 },
@@ -14,23 +18,19 @@ const PRODUCTS = [
 function App() {
   return (
     <>
-      <header className="site-header">
-        <h1>Shop</h1>
-        <div className="cart-indicator">
-          Cart: <span id="cart-badge">0</span>
-        </div>
-      </header>
+      <Header itemCount={0} />
 
       <main className="layout">
         <section className="products-column">
-          <div className="filters">
-            <input type="text" id="search-input" placeholder="Search products..." />
-            <select id="category-select">
-              <option value="">All categories</option>
-            </select>
-          </div>
+          <Filters
+            searchText=""
+            category=""
+            categories={[]}
+            onSearchChange={() => {}}
+            onCategoryChange={() => {}}
+          />
 
-          <p id="status-line" className="status-line"></p>
+          <StatusLine message="" />
 
           <ProductGrid products={PRODUCTS} />
         </section>
@@ -41,14 +41,13 @@ function App() {
           <div id="cart-items" className="cart-items"></div>
           <p id="cart-empty" className="cart-empty">Your cart is empty</p>
 
-          <div className="cart-summary">
-            <p className="cart-total-line">
-              <span>Total</span>
-              <span id="cart-total">₹0.00</span>
-            </p>
-            <p id="shipping-note" className="shipping-note"></p>
-            <button id="checkout-btn" disabled>Checkout</button>
-          </div>
+          <Summary
+            total={0}
+            shippingNote=""
+            isFreeShipping={false}
+            disabled={true}
+            onCheckout={() => {}}
+          />
         </aside>
       </main>
     </>
