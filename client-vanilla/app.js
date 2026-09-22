@@ -106,12 +106,31 @@ function renderProductGrid(products) {
   });
 }
 
+const categorySelect = document.getElementById('category-select');
+
+function populateCategoryFilter(products) {
+  const categories = [];
+  products.forEach(function (product) {
+    if (categories.indexOf(product.category) === -1) {
+      categories.push(product.category);
+    }
+  });
+
+  categories.forEach(function (category) {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  });
+}
+
 async function loadProducts() {
   setStatus('Loading products…');
   try {
     const res = await fetch(API_BASE + '/products');
     allProducts = await res.json();
     renderProductGrid(allProducts);
+    populateCategoryFilter(allProducts);
     clearStatus();
   } catch (err) {
     setStatus('Could not load products. Is the server running?', true);
