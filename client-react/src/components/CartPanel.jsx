@@ -1,6 +1,6 @@
 import CartRow from './CartRow.jsx';
 
-function CartPanel({ items, onIncrement }) {
+function CartPanel({ items, onIncrement, onDecrement, onRemove }) {
   const itemsClass = items.length === 0 ? 'cart-items hidden' : 'cart-items';
   const emptyClass = items.length > 0 ? 'cart-empty hidden' : 'cart-empty';
 
@@ -8,7 +8,13 @@ function CartPanel({ items, onIncrement }) {
     <>
       <div id="cart-items" className={itemsClass}>
         {items.map((item) => (
-          <CartRow key={item.productId} item={item} onIncrement={onIncrement} />
+          <CartRow
+            key={item.productId}
+            item={item}
+            onIncrement={onIncrement}
+            onDecrement={onDecrement}
+            onRemove={onRemove}
+          />
         ))}
       </div>
       <p id="cart-empty" className={emptyClass}>Your cart is empty</p>

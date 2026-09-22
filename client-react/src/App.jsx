@@ -41,11 +41,29 @@ function App() {
   }
 
   function handleIncrement(productId) {
-    const item = cart.find((cartItem) => cartItem.productId === productId);
-    if (item && item.quantity < 99) {
-      item.quantity++;
-    }
-    setCart(cart);
+    setCart(
+      cart.map((item) =>
+        item.productId === productId && item.quantity < 99
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+    );
+  }
+
+  function handleDecrement(productId) {
+    setCart(
+      cart
+        .map((item) =>
+          item.productId === productId
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  }
+
+  function handleRemove(productId) {
+    setCart(cart.filter((item) => item.productId !== productId));
   }
 
   const cartLines = cart.map((item) => {
@@ -85,7 +103,12 @@ function App() {
         <aside className="cart-column">
           <h2>Your Cart</h2>
 
-          <CartPanel items={cartLines} onIncrement={handleIncrement} />
+          <CartPanel
+            items={cartLines}
+            onIncrement={handleIncrement}
+            onDecrement={handleDecrement}
+            onRemove={handleRemove}
+          />
 
           <Summary
             total={total}
