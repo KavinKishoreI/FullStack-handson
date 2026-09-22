@@ -30,26 +30,39 @@ function App() {
 
   function handleAddToCart(product, quantity) {
     const existing = cart.find((item) => item.productId === product.id);
+    const currentQuantity = existing ? existing.quantity : 0;
+    const desiredQuantity = currentQuantity + quantity;
+    const newQuantity = Math.min(desiredQuantity, product.stock);
+
+    if (newQuantity < desiredQuantity) {
+      setStatus(`Only ${product.stock} left in stock for ${product.name}.`);
+    }
 
     if (existing) {
       setCart(
         cart.map((item) =>
-          item.productId === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
+          item.productId === product.id ? { ...item, quantity: newQuantity } : item
         )
       );
     } else {
-      setCart([...cart, { productId: product.id, quantity }]);
+      setCart([...cart, { productId: product.id, quantity: newQuantity }]);
     }
   }
 
   function handleIncrement(productId) {
+    const item = cart.find((cartItem) => cartItem.productId === productId);
+    const product = findProduct(productId);
+
+    if (item.quantity >= product.stock) {
+      setStatus(`Only ${product.stock} left in stock for ${product.name}.`);
+      return;
+    }
+
     setCart(
-      cart.map((item) =>
-        item.productId === productId && item.quantity < 99
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+      cart.map((cartItem) =>
+        cartItem.productId === productId
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
       )
     );
   }
