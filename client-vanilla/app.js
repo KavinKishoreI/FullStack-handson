@@ -1,13 +1,27 @@
 const API_BASE = 'http://localhost:4000/api';
+const FREE_SHIPPING_THRESHOLD = 200000;
 
 function formatPrice(paise) {
   return '₹' + (paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 let allProducts = [];
+let cart = [];
 
 const statusLine = document.getElementById('status-line');
 const productGrid = document.getElementById('product-grid');
+const cartBadge = document.getElementById('cart-badge');
+const cartItemsContainer = document.getElementById('cart-items');
+const cartEmpty = document.getElementById('cart-empty');
+const cartTotalEl = document.getElementById('cart-total');
+const shippingNoteEl = document.getElementById('shipping-note');
+const checkoutBtn = document.getElementById('checkout-btn');
+
+function findProduct(productId) {
+  return allProducts.find(function (product) {
+    return product.id === productId;
+  });
+}
 
 function setStatus(message, isError) {
   statusLine.textContent = message;
@@ -100,6 +114,10 @@ function renderProductGrid(products) {
     if (product.stock === 0) {
       addBtn.disabled = true;
     }
+    addBtn.addEventListener('click', function () {
+      const quantity = parseInt(qtyValue.textContent, 10);
+      addToCart(product.id, quantity);
+    });
     card.appendChild(addBtn);
 
     productGrid.appendChild(card);
@@ -124,6 +142,79 @@ function populateCategoryFilter(products) {
   });
 }
 
+function addToCart(productId, quantity) {
+  const existing = cart.find(function (item) {
+    return item.productId === productId;
+  });
+
+  if (existing) {
+    existing.quantity += quantity;
+  } else {
+    cart.push({ productId: productId, quantity: quantity });
+  }
+
+  renderCartPanel();
+  updateBadge();
+  updateTotal();
+  updateShippingNote();
+  updateCheckoutButton();
+}
+
+function renderCartPanel() {
+  cartItemsContainer.innerHTML = cart.map(function (item) {
+    const product = findProduct(item.productId);
+    return (
+      '<div class="cart-item" data-product-id="' + item.productId + '">' +
+        '<div class="cart-item-info">' +
+          '<span class="cart-item-name">' + product.name + '</span>' +
+          '<span class="cart-item-price">' + formatPrice(product.price) + ' each</span>' +
+        '</div>' +
+        '<div class="cart-item-controls">' +
+          '<span class="qty-value">Qty: ' + item.quantity + '</span>' +
+          '<span class="cart-item-total">' + formatPrice(product.price * item.quantity) + '</span>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join('');
+
+  cartEmpty.classList.toggle('hidden', cart.length > 0);
+  cartItemsContainer.classList.toggle('hidden', cart.length === 0);
+}
+
+function updateBadge() {
+  const itemCount = cart.reduce(function (sum, item) {
+    return sum + item.quantity;
+  }, 0);
+  cartBadge.textContent = String(itemCount);
+}
+
+function getCartTotal() {
+  return cart.reduce(function (sum, item) {
+    const product = findProduct(item.productId);
+    return sum + product.price * item.quantity;
+  }, 0);
+}
+
+function updateTotal() {
+  cartTotalEl.textContent = formatPrice(getCartTotal());
+}
+
+function updateShippingNote() {
+  const total = getCartTotal();
+  if (total >= FREE_SHIPPING_THRESHOLD) {
+    shippingNoteEl.textContent = 'You have free shipping';
+    shippingNoteEl.classList.add('met');
+  } else {
+    const remaining = FREE_SHIPPING_THRESHOLD - total;
+    shippingNoteEl.textContent = 'Add ' + formatPrice(remaining) + ' more for free shipping';
+    shippingNoteEl.classList.remove('met');
+  }
+}
+
+function updateCheckoutButton() {
+  checkoutBtn.disabled = cart.length === 0;
+}
+
 async function loadProducts() {
   setStatus('Loading products…');
   try {
@@ -131,6 +222,11 @@ async function loadProducts() {
     allProducts = await res.json();
     renderProductGrid(allProducts);
     populateCategoryFilter(allProducts);
+    renderCartPanel();
+    updateBadge();
+    updateTotal();
+    updateShippingNote();
+    updateCheckoutButton();
     clearStatus();
   } catch (err) {
     setStatus('Could not load products. Is the server running?', true);
