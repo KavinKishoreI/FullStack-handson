@@ -29,7 +29,7 @@ export function seed(db) {
     }
 
     insertUser.run(1, 'Demo User', 'demo@shop.test', bcrypt.hashSync('demo123', 10), 'customer');
-    insertUser.run(2, 'Admin User', 'admin@shop.test', bcrypt.hashSync('admin123', 10), 'admin');
+    insertUser.run(2, 'Admin', 'admin@shop.test', bcrypt.hashSync('admin123', 10), 'admin');
   });
 
   transaction();

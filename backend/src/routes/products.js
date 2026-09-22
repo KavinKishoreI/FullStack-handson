@@ -11,7 +11,8 @@ import {
   requireString,
   optionalString,
   requirePositiveInt,
-  requireNonNegativeInt
+  requireNonNegativeInt,
+  parseIdParam
 } from '../utils/validate.js';
 
 const router = Router();
@@ -23,10 +24,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new HttpError(400, 'Invalid product id');
-  }
+  const id = parseIdParam(req.params.id, 'product');
 
   const product = productModel.findById(id);
   if (!product) {
@@ -37,10 +35,10 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', requireAuth, requireAdmin, (req, res) => {
-  const name = requireString(req.body.name, 'name', 100);
+  const name = requireString(req.body.name, 'name', { max: 100 });
   const description = optionalString(req.body.description, 'description', 500);
   const price = requirePositiveInt(req.body.price, 'price');
-  const category = requireString(req.body.category, 'category', 50);
+  const category = requireString(req.body.category, 'category', { max: 50 });
   const imageUrl = optionalString(req.body.imageUrl, 'imageUrl');
   const stock = requireNonNegativeInt(req.body.stock, 'stock');
 
@@ -49,10 +47,7 @@ router.post('/', requireAuth, requireAdmin, (req, res) => {
 });
 
 router.patch('/:id', requireAuth, requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new HttpError(400, 'Invalid product id');
-  }
+  const id = parseIdParam(req.params.id, 'product');
 
   const existing = productModel.findById(id);
   if (!existing) {
@@ -68,10 +63,10 @@ router.patch('/:id', requireAuth, requireAdmin, (req, res) => {
     }
   }
 
-  if (req.body.name !== undefined) fields.name = requireString(req.body.name, 'name', 100);
+  if (req.body.name !== undefined) fields.name = requireString(req.body.name, 'name', { max: 100 });
   if (req.body.description !== undefined) fields.description = optionalString(req.body.description, 'description', 500);
   if (req.body.price !== undefined) fields.price = requirePositiveInt(req.body.price, 'price');
-  if (req.body.category !== undefined) fields.category = requireString(req.body.category, 'category', 50);
+  if (req.body.category !== undefined) fields.category = requireString(req.body.category, 'category', { max: 50 });
   if (req.body.imageUrl !== undefined) fields.imageUrl = optionalString(req.body.imageUrl, 'imageUrl');
   if (req.body.stock !== undefined) fields.stock = requireNonNegativeInt(req.body.stock, 'stock');
 

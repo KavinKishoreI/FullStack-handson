@@ -7,7 +7,7 @@ import requireAuth from '../middleware/requireAuth.js';
 import * as cartModel from '../models/cartModel.js';
 import * as productModel from '../models/productModel.js';
 import { HttpError } from '../utils/HttpError.js';
-import { requirePositiveInt, requireIntRange } from '../utils/validate.js';
+import { requirePositiveInt, requireIntInRange, parseIdParam } from '../utils/validate.js';
 
 const router = Router();
 
@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 
 router.post('/items', (req, res) => {
   const productId = requirePositiveInt(req.body.productId, 'productId');
-  const quantity = requireIntRange(req.body.quantity, 'quantity', 1, 99);
+  const quantity = requireIntInRange(req.body.quantity, 'quantity', 1, 99);
 
   const product = productModel.findById(productId);
   if (!product) {
@@ -42,8 +42,8 @@ router.post('/items', (req, res) => {
 });
 
 router.put('/items/:productId', (req, res) => {
-  const productId = requirePositiveInt(req.params.productId, 'productId');
-  const quantity = requireIntRange(req.body.quantity, 'quantity', 1, 99);
+  const productId = parseIdParam(req.params.productId, 'product');
+  const quantity = requireIntInRange(req.body.quantity, 'quantity', 1, 99);
 
   const existing = cartModel.getItem(req.user.id, productId);
   if (!existing) {
@@ -62,7 +62,7 @@ router.put('/items/:productId', (req, res) => {
 });
 
 router.delete('/items/:productId', (req, res) => {
-  const productId = requirePositiveInt(req.params.productId, 'productId');
+  const productId = parseIdParam(req.params.productId, 'product');
 
   const existing = cartModel.getItem(req.user.id, productId);
   if (!existing) {

@@ -6,14 +6,14 @@ import { Router } from 'express';
 import requireAuth from '../middleware/requireAuth.js';
 import * as orderModel from '../models/orderModel.js';
 import { HttpError } from '../utils/HttpError.js';
-import { requirePositiveInt } from '../utils/validate.js';
+import { parseIdParam } from '../utils/validate.js';
 
 const router = Router();
 
 router.use(requireAuth);
 
 router.post('/', (req, res) => {
-  const order = orderModel.createFromCart(req.user.id);
+  const { userId, ...order } = orderModel.createFromCart(req.user.id);
   res.status(201).json(order);
 });
 
@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  const id = requirePositiveInt(req.params.id, 'Order id');
+  const id = parseIdParam(req.params.id, 'order');
 
   const order = orderModel.findById(id);
   if (!order || order.userId !== req.user.id) {

@@ -10,7 +10,8 @@ const config = {
   dbPath: process.env.DB_PATH || './data/shop.db',
   jwtSecret: process.env.JWT_SECRET || 'dev-only-secret-change-me',
   jwtExpiresIn: '2h',
-  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173'
+  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  failCheckoutAfterOrder: process.env.FAIL_CHECKOUT_AFTER_ORDER === 'true'
 };
 
 export default config;

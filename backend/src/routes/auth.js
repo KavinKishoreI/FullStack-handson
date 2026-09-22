@@ -14,7 +14,7 @@ import { requireString, requireEmail } from '../utils/validate.js';
 const router = Router();
 
 router.post('/signup', (req, res) => {
-  const name = requireString(req.body.name, 'name', 50);
+  const name = requireString(req.body.name, 'name', { max: 50 });
   const email = requireEmail(req.body.email);
   const password = req.body.password;
 
@@ -42,8 +42,8 @@ router.post('/login', (req, res) => {
   const email = requireEmail(req.body.email);
   const password = req.body.password;
 
-  if (typeof password !== 'string') {
-    throw new HttpError(401, 'Invalid email or password');
+  if (typeof password !== 'string' || password.length === 0) {
+    throw new HttpError(400, 'password is required');
   }
 
   const user = userModel.findByEmailWithPassword(email);

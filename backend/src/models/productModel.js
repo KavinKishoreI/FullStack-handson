@@ -17,7 +17,7 @@ function toApi(row) {
 }
 
 export function list({ search, category } = {}) {
-  let sql = 'SELECT * FROM products WHERE 1=1';
+  let sql = 'SELECT id, name, description, price, category, image_url, stock FROM products WHERE 1=1';
   const params = [];
 
   if (search) {
@@ -37,7 +37,9 @@ export function list({ search, category } = {}) {
 }
 
 export function findById(id) {
-  const row = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
+  const row = db.prepare(
+    'SELECT id, name, description, price, category, image_url, stock FROM products WHERE id = ?'
+  ).get(id);
   return row ? toApi(row) : null;
 }
 

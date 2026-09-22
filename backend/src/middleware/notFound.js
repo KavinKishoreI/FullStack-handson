@@ -5,7 +5,7 @@
 import { HttpError } from '../utils/HttpError.js';
 
 function notFound(req, res, next) {
-  throw new HttpError(404, `Not found: ${req.method} ${req.originalUrl}`);
+  throw new HttpError(404, 'Route not found');
 }
 
 export default notFound;

@@ -3,6 +3,7 @@
 // Imported by order routes.
 
 import db from '../db/index.js';
+import config from '../config.js';
 import { HttpError } from '../utils/HttpError.js';
 
 export function createFromCart(userId) {
@@ -32,6 +33,10 @@ export function createFromCart(userId) {
     ).run(userId, total);
 
     const orderId = orderResult.lastInsertRowid;
+
+    if (config.failCheckoutAfterOrder) {
+      throw new Error('Simulated failure after order insert');
+    }
 
     const insertItem = db.prepare(
       'INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)'
