@@ -23,6 +23,8 @@ const PRODUCTS = [
 function App() {
   const [cart, setCart] = useState([]);
   const [status, setStatus] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [category, setCategory] = useState('');
 
   function findProduct(productId) {
     return PRODUCTS.find((product) => product.id === productId);
@@ -107,6 +109,14 @@ function App() {
     ? 'You have free shipping'
     : `Add ${formatPrice(FREE_SHIPPING_THRESHOLD - total)} more for free shipping`;
 
+  const categories = [...new Set(PRODUCTS.map((product) => product.category))];
+
+  const visibleProducts = PRODUCTS.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchText.toLowerCase());
+    const matchesCategory = category === '' || product.category === category;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <>
       <Header itemCount={itemCount} />
@@ -114,16 +124,16 @@ function App() {
       <main className="layout">
         <section className="products-column">
           <Filters
-            searchText=""
-            category=""
-            categories={[]}
-            onSearchChange={() => {}}
-            onCategoryChange={() => {}}
+            searchText={searchText}
+            category={category}
+            categories={categories}
+            onSearchChange={setSearchText}
+            onCategoryChange={setCategory}
           />
 
           <StatusLine message={status} />
 
-          <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
+          <ProductGrid products={visibleProducts} onAddToCart={handleAddToCart} />
         </section>
 
         <aside className="cart-column">
