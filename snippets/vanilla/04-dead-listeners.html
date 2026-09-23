@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04 Dead listeners</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-title">Vanilla JS<span class="sidebar-subtitle">Where it falls apart</span></div>
+      <a class="nav-link" href="index.html"><span class="topic-number">00</span>Start here</a>
+      <a class="nav-link" href="01-building-ui-by-hand.html"><span class="topic-number">01</span>Building UI by hand</a>
+      <a class="nav-link" href="02-rebuild-destroys-input.html"><span class="topic-number">02</span>Rebuilding destroys input</a>
+      <a class="nav-link" href="03-state-out-of-sync.html"><span class="topic-number">03</span>State out of sync</a>
+      <a class="nav-link active" href="04-dead-listeners.html"><span class="topic-number">04</span>Dead listeners</a>
+    </nav>
+
+    <main class="stage">
+      <p class="file-path">snippets/vanilla/04-dead-listeners.html</p>
+      <h1>04 · Event listeners die when the DOM is rebuilt</h1>
+
+      <div class="steps">
+        <strong>Walkthrough</strong>
+        <ol>
+          <li>Click <strong>+</strong> on any line. The quantity goes up.</li>
+          <li>Click <strong>+</strong> again. Nothing happens, on any line.</li>
+          <li>The listeners were attached to the old buttons. <code>innerHTML</code> replaced them with new buttons that have no listeners.</li>
+        </ol>
+      </div>
+
+      <div class="exercise">
+        <ul id="cart-list"></ul>
+        <p class="log" id="log"></p>
+      </div>
+
+      <p class="next">That's the last vanilla page. Next: switch to the <strong>React snippets</strong> and see each of these problems fixed.</p>
+    </main>
+  </div>
+
+  <script>
+    const cart = [
+      { name: 'Wireless Mouse', quantity: 1 },
+      { name: 'Desk Lamp', quantity: 1 },
+    ];
+
+    const cartList = document.getElementById('cart-list');
+    const log = document.getElementById('log');
+
+    function render() {
+      cartList.innerHTML = cart.map(function (item) {
+        return '<li>' + item.name + ' × ' + item.quantity + ' <button class="plus">+</button></li>';
+      }).join('');
+    }
+
+    function attachListeners() {
+      cartList.querySelectorAll('.plus').forEach(function (button, index) {
+        button.addEventListener('click', function () {
+          cart[index].quantity += 1;
+          log.textContent = 'Click handled: ' + cart[index].name + ' is now ' + cart[index].quantity;
+          render();
+        });
+      });
+    }
+
+    render();
+    attachListeners();
+  </script>
+</body>
+</html>

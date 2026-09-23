@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03 State out of sync</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-title">Vanilla JS<span class="sidebar-subtitle">Where it falls apart</span></div>
+      <a class="nav-link" href="index.html"><span class="topic-number">00</span>Start here</a>
+      <a class="nav-link" href="01-building-ui-by-hand.html"><span class="topic-number">01</span>Building UI by hand</a>
+      <a class="nav-link" href="02-rebuild-destroys-input.html"><span class="topic-number">02</span>Rebuilding destroys input</a>
+      <a class="nav-link active" href="03-state-out-of-sync.html"><span class="topic-number">03</span>State out of sync</a>
+      <a class="nav-link" href="04-dead-listeners.html"><span class="topic-number">04</span>Dead listeners</a>
+    </nav>
+
+    <main class="stage">
+      <p class="file-path">snippets/vanilla/03-state-out-of-sync.html</p>
+      <h1>03 · One piece of data, two places on screen, out of sync</h1>
+
+      <div class="steps">
+        <strong>Walkthrough</strong>
+        <ol>
+          <li>Click <strong>Add</strong> on three products. The badge and the list agree.</li>
+          <li>Click <strong>Remove</strong> on one line in the cart.</li>
+          <li>The list shows 2 items. The badge still says 3. No error anywhere.</li>
+          <li>Compare the two functions below. <code>addToCart</code> remembers to update both places. <code>removeFromCart</code> forgot the badge — and nothing warned us.</li>
+        </ol>
+      </div>
+
+      <div class="exercise">
+        <p>Cart: <span id="badge" class="badge">0</span></p>
+
+        <div class="row">
+          <button data-name="Wireless Mouse">Add Wireless Mouse</button>
+          <button data-name="Desk Lamp">Add Desk Lamp</button>
+          <button data-name="Ceramic Mug">Add Ceramic Mug</button>
+        </div>
+
+        <ul id="cart-list"></ul>
+      </div>
+
+      <p class="code-label">The two functions that change the cart</p>
+      <pre id="source" class="source"></pre>
+
+      <p class="next">Next: <a href="04-dead-listeners.html">04 · Dead listeners →</a></p>
+    </main>
+  </div>
+
+  <script>
+    let cart = [];
+
+    const badge = document.getElementById('badge');
+    const cartList = document.getElementById('cart-list');
+
+    function renderList() {
+      cartList.innerHTML = '';
+      cart.forEach(function (name, index) {
+        const li = document.createElement('li');
+        li.textContent = name + ' ';
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', function () {
+          removeFromCart(index);
+        });
+        li.appendChild(removeBtn);
+        cartList.appendChild(li);
+      });
+    }
+
+    function updateBadge() {
+      badge.textContent = String(cart.length);
+    }
+
+    function addToCart(name) {
+      cart.push(name);
+      renderList();
+      updateBadge();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderList();
+    }
+
+    document.querySelectorAll('button[data-name]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        addToCart(button.dataset.name);
+      });
+    });
+
+    function showCode(functions) {
+      const blocks = functions.map(function (fn) {
+        const lines = fn.toString().split('\n');
+        const rest = lines.slice(1).filter(function (line) { return line.trim() !== ''; });
+        const indent = Math.min.apply(null, rest.map(function (line) { return line.match(/^ */)[0].length; }));
+        return [lines[0]].concat(lines.slice(1).map(function (line) { return line.slice(indent); })).join('\n');
+      });
+      document.getElementById('source').textContent = blocks.join('\n\n');
+    }
+
+    showCode([addToCart, removeFromCart]);
+  </script>
+</body>
+</html>

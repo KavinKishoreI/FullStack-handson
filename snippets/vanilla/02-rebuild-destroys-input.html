@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>02 Rebuilding destroys input</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="sidebar-title">Vanilla JS<span class="sidebar-subtitle">Where it falls apart</span></div>
+      <a class="nav-link" href="index.html"><span class="topic-number">00</span>Start here</a>
+      <a class="nav-link" href="01-building-ui-by-hand.html"><span class="topic-number">01</span>Building UI by hand</a>
+      <a class="nav-link active" href="02-rebuild-destroys-input.html"><span class="topic-number">02</span>Rebuilding destroys input</a>
+      <a class="nav-link" href="03-state-out-of-sync.html"><span class="topic-number">03</span>State out of sync</a>
+      <a class="nav-link" href="04-dead-listeners.html"><span class="topic-number">04</span>Dead listeners</a>
+    </nav>
+
+    <main class="stage">
+      <p class="file-path">snippets/vanilla/02-rebuild-destroys-input.html</p>
+      <h1>02 · Rebuilding the DOM destroys what the user typed</h1>
+
+      <div class="steps">
+        <strong>Walkthrough</strong>
+        <ol>
+          <li>Type a gift note into any card.</li>
+          <li>Click <strong>Refresh prices</strong>. Only the prices were supposed to change.</li>
+          <li>Your note is gone. Every card was thrown away and rebuilt from scratch.</li>
+        </ol>
+      </div>
+
+      <div class="exercise">
+        <p><button id="refresh-btn">Refresh prices</button></p>
+        <div id="grid" class="row"></div>
+      </div>
+
+      <p class="next">Next: <a href="03-state-out-of-sync.html">03 · State out of sync →</a></p>
+    </main>
+  </div>
+
+  <script>
+    const products = [
+      { name: 'Wireless Mouse', price: 799 },
+      { name: 'Desk Lamp', price: 1299 },
+      { name: 'Ceramic Mug', price: 299 },
+    ];
+
+    const grid = document.getElementById('grid');
+
+    function render() {
+      grid.innerHTML = products.map(function (product) {
+        return (
+          '<div class="card">' +
+            '<h3>' + product.name + '</h3>' +
+            '<p>₹' + product.price + '</p>' +
+            '<input type="text" placeholder="Gift note">' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    document.getElementById('refresh-btn').addEventListener('click', function () {
+      products.forEach(function (product) {
+        product.price = product.price + 10;
+      });
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
