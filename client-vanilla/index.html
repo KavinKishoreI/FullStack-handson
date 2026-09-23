@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>Shop</h1>
+    <div class="cart-indicator">
+      Cart: <span id="cart-badge">0</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="products-column">
+      <div class="filters">
+        <input type="text" id="search-input" placeholder="Search products...">
+        <select id="category-select">
+          <option value="">All categories</option>
+        </select>
+      </div>
+
+      <p id="status-line" class="status-line"></p>
+
+      <div id="product-grid" class="product-grid"></div>
+    </section>
+
+    <aside class="cart-column">
+      <h2>Your Cart</h2>
+
+      <div id="cart-items" class="cart-items"></div>
+      <p id="cart-empty" class="cart-empty">Your cart is empty</p>
+
+      <div class="cart-summary">
+        <p class="cart-total-line">
+          <span>Total</span>
+          <span id="cart-total">₹0.00</span>
+        </p>
+        <p id="shipping-note" class="shipping-note"></p>
+        <button id="checkout-btn" disabled>Checkout</button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
