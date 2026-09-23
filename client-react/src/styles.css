@@ -1,0 +1,281 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: #222;
+  background: #f7f7f7;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #1f2933;
+  color: #fff;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.cart-indicator {
+  font-size: 1rem;
+}
+
+#cart-badge {
+  display: inline-block;
+  min-width: 1.4rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #e63946;
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+#search-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#category-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.status-line {
+  min-height: 1.2rem;
+  margin: 0 0 1rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.status-line.error {
+  color: #b3261e;
+  background: #fbeaea;
+  border-radius: 6px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #fff;
+}
+
+.product-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #eee;
+}
+
+.product-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.product-category {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #666;
+  background: #eee;
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+}
+
+.product-price {
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+.stock-note {
+  font-size: 0.85rem;
+  color: #2a7a2a;
+}
+
+.stock-note.low {
+  color: #b06a00;
+}
+
+.stock-note.out {
+  color: #b3261e;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stepper button {
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f0f0f0;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stepper .qty-value {
+  min-width: 1.6rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.add-to-cart-btn {
+  margin-top: 0.4rem;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background: #1f2933;
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cart-item-name {
+  font-weight: 600;
+}
+
+.cart-item-price {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.cart-item-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.cart-item-total {
+  font-weight: bold;
+}
+
+.remove-btn {
+  border: none;
+  background: none;
+  color: #b3261e;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+#cart-empty {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.cart-summary {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+.cart-total-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem;
+}
+
+.shipping-note {
+  font-size: 0.85rem;
+  color: #b06a00;
+  margin: 0 0 0.75rem;
+}
+
+.shipping-note.met {
+  color: #2a7a2a;
+}
+
+#checkout-btn {
+  width: 100%;
+  padding: 0.65rem;
+  border: none;
+  border-radius: 6px;
+  background: #2a7a2a;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
